@@ -25,6 +25,11 @@ public final class Graph {
         }
     }
     
+    /**
+     *
+     * @param e -- ребро графа
+     * Добавляет ребро в граф.
+     */
     public void add(Edge e){
         if (edges.containsKey(e.from)){
             ((ArrayList<Edge>)edges.get(e.from)).add(e);
@@ -36,6 +41,11 @@ public final class Graph {
         }
     }
     
+    /**
+     *
+     * @param v -- номер вершины
+     * @return Возвращает массив ребер, которые ведут из вешины с номером v.
+     */
     public Edge[] get_edges(int v){
         if (edges.containsKey(v)){
             return (Edge[])((ArrayList<Edge>)edges.get(v)).toArray();

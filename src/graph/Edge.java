@@ -12,8 +12,20 @@ import java.util.Comparator;
  * @author artem
  */
 public class Edge {
+
+    /**
+     *Номер вершины из которой ведет ребро.
+     */
     public int from;
+
+    /**
+     *Номер вершины в которую ведет ребро.
+     */
     public int to;
+
+    /**
+     *вес ребра.
+     */
     public double weight;
     
     Edge(int f, int t, double w){
