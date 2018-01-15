@@ -31,12 +31,17 @@ public final class Graph {
      * Добавляет ребро в граф.
      */
     public void add(Edge e){
+        if (!edges.containsKey(e.to)){
+            ArrayList<Edge> temp = new ArrayList<Edge>();
+            edges.put(e.to, temp);
+        
+        }
         if (edges.containsKey(e.from)){
             ((ArrayList<Edge>)edges.get(e.from)).add(e);
         }
         else{
-            ArrayList<Edge> temp = new ArrayList<Edge>(1);
-            temp.add(0, e);
+            ArrayList<Edge> temp = new ArrayList<Edge>();
+            temp.add(e);
             edges.put(e.from, temp);
         }
     }
