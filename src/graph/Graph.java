@@ -35,8 +35,8 @@ public final class Graph {
             ((ArrayList<Edge>)edges.get(e.from)).add(e);
         }
         else{
-            ArrayList<Edge> temp = new ArrayList<>(1);
-            temp.set(0, e);
+            ArrayList<Edge> temp = new ArrayList<Edge>(1);
+            temp.add(0, e);
             edges.put(e.from, temp);
         }
     }
@@ -48,7 +48,12 @@ public final class Graph {
      */
     public Edge[] get_edges(int v){
         if (edges.containsKey(v)){
-            return (Edge[])((ArrayList<Edge>)edges.get(v)).toArray();
+            ArrayList<Edge> temp = ((ArrayList<Edge>)edges.get(v));
+            Edge[] res = new Edge[temp.size()];
+            for (int i = 0; i < temp.size(); i++){
+                res[i] = temp.get(i);
+            }
+            return res;
         }
         else{
             return new Edge[0];

@@ -83,6 +83,11 @@ public class GraphTheory {
         public static void main(String argv[]) throws Exception{
             Scanner in = new Scanner(System.in);
             Graph g = new Graph();
+            g.add(new Edge(1, 2, 1.0));
+            Edge[] ale = g.get_edges(1);
+            if (true){
+                return;
+            }
             try{                
                 while (in.hasNext()){
                     int v1, v2;
