@@ -54,4 +54,29 @@ public final class Graph {
             return new Edge[0];
         }
     }
+    
+    /**
+     *
+     * @return Массив номеров вершин графа.
+     */
+    public int[] get_vertexs(){
+        Object[] verts = (edges.keySet().toArray());
+        int res[] = new int[verts.length];
+        for (int i = 0; i < verts.length; i++){
+            res[i] = (int)verts[i];
+        }
+        return res;
+    }
+    
+    public Graph rm_edge(int v1, int v2){
+        Graph g = new Graph();
+        for (int v: get_vertexs()){
+            for (Edge e: get_edges(v)){
+                if (e.from != v1 || e.to != v2){
+                    g.add(e);
+                }
+            }
+        }
+        return g;
+    }
 }
