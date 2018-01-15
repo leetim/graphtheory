@@ -28,7 +28,11 @@ public class Edge {
      */
     public double weight;
     
-    Edge(int f, int t, double w){
+    public Edge(){
+        this(0, 0, 0.0);
+    }
+    
+    public Edge(int f, int t, double w){
         from = f;
         to = t;
         weight = w;

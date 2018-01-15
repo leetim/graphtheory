@@ -1,13 +1,18 @@
 package dijkstra;
 
+import graph.Graph;
+import graph.WayGetter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
 
 
-public class Dijkstra {
+public class Dijkstra implements WayGetter {
 
 	private static int INF = Integer.MAX_VALUE / 2; // "Бесконечность"
-
+        
+        public Dijkstra(){}
+        
 	public static double[] dijkstra(double[][] graph, int start) {
 		boolean[] used = new boolean[graph.length]; // массив пометок
 		double[] dist = new double[graph.length]; // массив расстояния. dist[v] = минимальное_расстояние(start, v)
@@ -69,4 +74,14 @@ public class Dijkstra {
 		}
 		return dist;
 	}
+
+    @Override
+    public Map get_best_ways(int vert, Graph g) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public double[] get_best_ways_len(int vert, Graph g) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

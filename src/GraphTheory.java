@@ -1,4 +1,5 @@
 import dijkstra.AdjacencyListGraph;
+import dijkstra.Dijkstra;
 import static dijkstra.Dijkstra.dijkstra;
 import graph.Edge;
 import graph.Graph;
@@ -49,7 +50,13 @@ public class GraphTheory {
 		System.out.println();
 	}
 
-        public static Edge minimize_LM(WayGetter wg, Graph g){
+    /**
+     *
+     * @param wg
+     * @param g
+     * @return Ребро, убрав из графа которое будет минимизирована LM метрика для графа.
+     */
+    public static Edge minimize_LM(WayGetter wg, Graph g){
             Edge min_e = null;
             double min_len = 1E300;
             int[] vertexs = g.get_vertexs();
@@ -73,8 +80,38 @@ public class GraphTheory {
             return min_e;
         }
         
-        public static void main(String argv[]){
-        
+        public static void main(String argv[]) throws Exception{
             Scanner in = new Scanner(System.in);
+            Graph g = new Graph();
+            try{                
+                while (in.hasNext()){
+                    int v1, v2;
+                    double l;
+                    if (in.hasNextInt()){
+                        v1 = in.nextInt();
+                    }
+                    else{
+                        throw new Exception("Expected int!");
+                    }
+                    if (in.hasNextInt()){
+                        v2 = in.nextInt();
+                    }
+                    else{
+                        throw new Exception("Expected int!");
+                    }
+                    if (in.hasNextDouble()){
+                        l = in.nextDouble();
+                    }
+                    else{
+                        throw new Exception("Expected Double!");
+                    }
+                    g.add(new Edge(v1, v2, l));
+                }
+                Edge min_e = minimize_LM(new Dijkstra(), g);
+                System.out.println(String.format("Edge: %d -> %d: %f", min_e.from, min_e.to, min_e.weight));
+            }
+            catch(Exception e){
+                System.err.println(e.getMessage());
+            }
         }
 }

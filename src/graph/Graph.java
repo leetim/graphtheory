@@ -10,15 +10,15 @@ import java.util.TreeMap;
  */
 public final class Graph {
     private Map edges;
-    Graph(){
+    public Graph(){
         edges = new TreeMap();
     }
     
-    Graph(ArrayList<Edge> edge_list){
+    public Graph(ArrayList<Edge> edge_list){
         this((Edge[])edge_list.toArray());
     }
     
-    Graph(Edge[] edge_list){
+    public Graph(Edge[] edge_list){
         this();
         for (Edge e: edge_list) {
             add(e);
@@ -68,6 +68,12 @@ public final class Graph {
         return res;
     }
     
+    /**
+     *
+     * @param v1
+     * @param v2
+     * @return Возврощает граф без ребер, соединяющих вершину v1 с v2.
+     */
     public Graph rm_edge(int v1, int v2){
         Graph g = new Graph();
         for (int v: get_vertexs()){
