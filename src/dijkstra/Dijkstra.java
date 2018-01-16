@@ -3,8 +3,10 @@ package dijkstra;
 import graph.Edge;
 import graph.Graph;
 import graph.WayGetter;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,89 +16,87 @@ public class Dijkstra implements WayGetter {
 
 	public Dijkstra() {
 	}
-
-	@SuppressWarnings("unchecked")
-	public static double[] dijkstra_getMass(ArrayList<?> graph, int start) {
-		boolean[] used = new boolean[graph.size()]; // массив пометок
-		double[] dist = new double[graph.size()]; // массив расстояния. dist[v] = минимальное_расстояние(start, v)
-
+	
+	private static boolean log = false;
+	
+	private static void println(String msg)
+	{
+		if (log) System.out.println(msg);
+	}
+	
+	public static double[] dijkstra_getMassHeap(Graph graph, int start) {
+		println("==== dijkstra_getMassHeap ====");
+		int vertexs[] = graph.get_vertexs();
+        int v_max = -1;
+        for (int v: vertexs){
+            v_max = Math.max(v_max, v);
+        }
+        ArrayList<Pair<Double, Integer>> q = new ArrayList<>();
+        ArrayList<Pair<Double, Integer>> distPairs = new ArrayList<>();
+		double[] dist = new double[v_max + 1];
 		Arrays.fill(dist, INF); // устанаавливаем расстояние до всех вершин INF
-		dist[start] = 0; // для начальной вершины положим 0
+        for (int i = 0; i < v_max + 1; i++)
+        {
+        	distPairs.add(new Pair<Double, Integer>(INF, i));
+        }
+        distPairs.get(start).setFirstKey(0.0);
+		
+        for (int v: vertexs)
+        {
+        	q.add(distPairs.get(v));
+        }
+        Collections.sort(q);
+		Edge edges[] = null;
 
-		for (;;) {
-			int v = -1;
-			for (int nv = 0; nv < graph.size(); nv++) // перебираем вершины
-				if (!used[nv] && dist[nv] < INF && (v == -1 || dist[v] > dist[nv])) // выбираем самую близкую
+		for(Pair<Double, Integer> tmp : q)
+		{
+			println("<" + tmp.getSecondKey() + " " + tmp.getFirstKey() + ">");
+		}
+		println("");
+		while(!q.isEmpty()) {
+			//int v = -1;
+			//for (int nv = 0; nv < used.length; nv++) // перебираем вершины
+			//	if (!used[nv] && dist.get(0).getFirstKey() < INF && (v == -1 || dist[v] > dist[nv])) // выбираем самую близкую
 																					// непомеченную вершину
-					v = nv;
-			if (v == -1)
+			//		v = nv;
+			Pair<Double, Integer> cur = q.iterator().next();
+			dist[cur.getSecondKey()] = Math.min(cur.getFirstKey(), dist[cur.getSecondKey()]);
+			q.remove(cur);
+			println("<" + cur.getSecondKey() + " " + cur.getFirstKey() + "> - cursor");
+			if (cur.getFirstKey() == INF)
 				break; // ближайшая вершина не найдена
-			used[v] = true; // помечаем ее
-			if (graph.get(v) instanceof ArrayList<?>)
-				for (int nv = 0; nv < graph.size(); nv++) {
-					if (!used[nv] && ((ArrayList<Double>) graph.get(v)).get(nv) < INF) // для всех непомеченных смежных
-						dist[nv] = Math.min(dist[nv], dist[v] + ((ArrayList<Double>) graph.get(v)).get(nv)); // улучшаем
-																												// оценку
-																												// расстояния
-																												// (релаксация)
-				}
-			else if (graph.get(v) instanceof AdjacencyListGraph) {
-				for (int nv = 0; nv < ((AdjacencyListGraph) graph.get(v)).size(); nv++) {
-					if (!used[((AdjacencyListGraph) graph.get(v)).getPoint(nv)]
-							&& ((AdjacencyListGraph) graph.get(v)).get(nv) < INF) // для всех непомеченных смежных
-						dist[((AdjacencyListGraph) graph.get(v)).getPoint(nv)] = Math.min(
-								dist[((AdjacencyListGraph) graph.get(v)).getPoint(nv)],
-								dist[v] + ((AdjacencyListGraph) graph.get(v)).get(nv)); // улучшаем оценку расстояния
-																						// (релаксация)
+			//used[v] = true; // помечаем ее
+			edges = graph.get_edges(cur.getSecondKey());
+			for (Edge e: edges) {
+				//dist[e.to] = Math.min(dist[e.to], dist[e.from] + e.weight); // улучшаем оценку
+				if (distPairs.get(e.from).getFirstKey() + e.weight < distPairs.get(e.to).getFirstKey())
+				{
+					Pair<Double, Integer> tmp = distPairs.get(e.to);
+					q.remove(tmp);
+					println("<" + tmp.getSecondKey() + " " + tmp.getFirstKey() + "> removed");
+					distPairs.get(e.to).setFirstKey((distPairs.get(e.from).getFirstKey() + e.weight));
+					tmp = new Pair<Double, Integer>(distPairs.get(e.to).getFirstKey(), e.to);
+					q.add(new Pair<Double, Integer>(distPairs.get(e.to).getFirstKey(), e.to));
+					println("<" + tmp.getSecondKey() + " " + tmp.getFirstKey() + "> added");
+					println("");
+			        Collections.sort(q);
 				}
 			}
+			for(Pair<Double, Integer> tmp : q)
+			{
+				println("<" + tmp.getSecondKey() + " " + tmp.getFirstKey() + ">");
+			}
+			println("");
 		}
 		return dist;
 	}
-
-	@SuppressWarnings("unchecked")
-	public static Map<Integer, Double> dijkstra_getMap(ArrayList<?> graph, int start) {
-		boolean[] used = new boolean[graph.size()]; // массив пометок
-		Map<Integer, Double> dist = new HashMap<Integer, Double>(); // массив расстояния. dist[v] =
-																	// минимальное_расстояние(start, v)
-
-		// Arrays.fill(dist, INF); // устанаавливаем расстояние до всех вершин INF
-		for (int i = 0; i < graph.size(); i++)
-			dist.put(i, INF);
-		dist.replace(start, 0.0); // для начальной вершины положим 0
-
-		for (;;) {
-			int v = -1;
-			for (int nv = 0; nv < graph.size(); nv++) // перебираем вершины
-				if (!used[nv] && dist.get(nv) < INF && (v == -1 || dist.get(v) > dist.get(nv))) // выбираем самую
-																								// близкую
-					// непомеченную вершину
-					v = nv;
-			if (v == -1)
-				break; // ближайшая вершина не найдена
-			used[v] = true; // помечаем ее
-			if (graph.get(v) instanceof ArrayList<?>)
-				for (int nv = 0; nv < graph.size(); nv++) {
-					if (!used[nv] && ((ArrayList<Double>) graph.get(v)).get(nv) < INF) // для всех непомеченных смежных
-						dist.replace(nv,
-								Math.min(dist.get(nv), dist.get(v) + ((ArrayList<Double>) graph.get(v)).get(nv))); // улучшаем
-					// оценку
-					// расстояния
-					// (релаксация)
-				}
-			else if (graph.get(v) instanceof AdjacencyListGraph) {
-				for (int nv = 0; nv < ((AdjacencyListGraph) graph.get(v)).size(); nv++) {
-					if (!used[((AdjacencyListGraph) graph.get(v)).getPoint(nv)]
-							&& ((AdjacencyListGraph) graph.get(v)).get(nv) < INF) // для всех непомеченных смежных
-						dist.replace(((AdjacencyListGraph) graph.get(v)).getPoint(nv),
-								Math.min(dist.get(((AdjacencyListGraph) graph.get(v)).getPoint(nv)),
-										dist.get(v) + ((AdjacencyListGraph) graph.get(v)).get(nv))); // улучшаем оценку
-																										// расстояния
-					// (релаксация)
-				}
-			}
-		}
-		return dist;
+	
+	public static Map<Integer, Double> dijkstra_getMapHeap(Graph graph, int start) {
+		double[] dist = dijkstra_getMassHeap(graph, start);
+		Map<Integer, Double> ret = new HashMap<>();
+		for (int i = 0; i < dist.length; i++)
+			if (dist[i] < INF) ret.put(i, dist[i]);
+		return ret;
 	}
 
 
@@ -134,45 +134,20 @@ public class Dijkstra implements WayGetter {
 
 
 	public static Map<Integer, Double> dijkstra_getMap(Graph graph, int start) {
-		int vertexs[] = graph.get_vertexs();
-		Edge edges[] = null;
-		boolean[] used = new boolean[vertexs.length]; // массив пометок
-		Map<Integer, Double> dist = new HashMap<Integer, Double>(); // массив расстояния. dist[v] =
-																	// минимальное_расстояние(start, v)
-
-		// Arrays.fill(dist, INF); // устанаавливаем расстояние до всех вершин INF
-		for (int i = 0; i < vertexs.length; i++)
-			dist.put(i, INF);
-		dist.replace(start, 0.0); // для начальной вершины положим 0
-
-		for (;;) {
-			int v = -1;
-			for (int nv = 0; nv < vertexs.length; nv++) // перебираем вершины
-				if (!used[nv] && dist.get(nv) < INF && (v == -1 || dist.get(v) > dist.get(nv))) // выбираем самую
-																								// близкую
-					// непомеченную вершину
-					v = nv;
-			if (v == -1)
-				break; // ближайшая вершина не найдена
-			used[v] = true; // помечаем ее
-			edges = graph.get_edges(v);
-			for (int nv = 0; nv < edges.length; nv++) {
-				if (!used[v] && edges[nv].weight < INF) // для всех непомеченных смежных
-					dist.replace(edges[nv].to, Math.min(dist.get(edges[nv].to), dist.get(v) + edges[nv].to)); // улучшаем оценку
-																								// расстояния
-																								// (релаксация)
-			}
-		}
-		return dist;
+		double[] dist = dijkstra_getMass(graph, start);
+		Map<Integer, Double> ret = new HashMap<>();
+		for (int i = 0; i < dist.length; i++)
+			if (dist[i] < INF) ret.put(i, dist[i]);
+		return ret;
 	}
 
 	@Override
-	public Map get_best_ways(int vert, Graph g) {
-		return dijkstra_getMap(g, vert);
+	public Map<?, ?> get_best_ways(int vert, Graph g) {
+		return dijkstra_getMapHeap(g, vert);
 	}
 
 	@Override
 	public double[] get_best_ways_len(int vert, Graph g) {
-		return dijkstra_getMass(g, vert);
+		return dijkstra_getMassHeap(g, vert);
 	}
 }
