@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class Dijkstra implements WayGetter {
 
-	private static Double INF = Double.MAX_VALUE / 2; // "Бесконечность"
+	public static Double INF = Double.MAX_VALUE / 2; // "Бесконечность"
 
 	public Dijkstra() {
 	}
@@ -102,16 +102,20 @@ public class Dijkstra implements WayGetter {
 
 	public static double[] dijkstra_getMass(Graph graph, int start) {
 		int vertexs[] = graph.get_vertexs();
+                int v_max = -1;
+                for (int v: vertexs){
+                    v_max = Math.max(v_max, v);
+                }
 		Edge edges[] = null;
-		boolean[] used = new boolean[vertexs.length]; // массив пометок
-		double[] dist = new double[vertexs.length]; // массив расстояния. dist[v] = минимальное_расстояние(start, v)
+		boolean[] used = new boolean[v_max + 1]; // массив пометок
+		double[] dist = new double[v_max + 1]; // массив расстояния. dist[v] = минимальное_расстояние(start, v)
 
 		Arrays.fill(dist, INF); // устанаавливаем расстояние до всех вершин INF
 		dist[start] = 0; // для начальной вершины положим 0
 
 		for (;;) {
 			int v = -1;
-			for (int nv = 0; nv < vertexs.length; nv++) // перебираем вершины
+			for (int nv = 0; nv < used.length; nv++) // перебираем вершины
 				if (!used[nv] && dist[nv] < INF && (v == -1 || dist[v] > dist[nv])) // выбираем самую близкую
 																					// непомеченную вершину
 					v = nv;
@@ -119,9 +123,8 @@ public class Dijkstra implements WayGetter {
 				break; // ближайшая вершина не найдена
 			used[v] = true; // помечаем ее
 			edges = graph.get_edges(v);
-			for (int nv = 0; nv < edges.length; nv++) {
-				if (!used[v] && edges[nv].weight < INF) // для всех непомеченных смежных
-					dist[edges[nv].to] = Math.min(dist[edges[nv].to], dist[v] + edges[nv].to); // улучшаем оценку
+			for (Edge e: edges) {
+				dist[e.to] = Math.min(dist[e.to], dist[e.from] + e.weight); // улучшаем оценку
 																								// расстояния
 																								// (релаксация)
 			}

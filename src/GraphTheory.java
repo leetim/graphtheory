@@ -1,6 +1,5 @@
 import dijkstra.AdjacencyListGraph;
 import dijkstra.Dijkstra;
-import static dijkstra.Dijkstra.dijkstra;
 import graph.Edge;
 import graph.Graph;
 import graph.WayGetter;
@@ -14,63 +13,37 @@ import java.util.Scanner;
  */
 public class GraphTheory {
     
-    
-        public static void main1(String args[]) {
-		double[] dist = dijkstra(
-				new double[][] { { 0, 5, 28, 30 }, { 5, 0, 10, 14 }, { 28, 10, 0, 15 }, { 30, 14, 15, 0 } }, 0);
-		for (int i = 0; i < dist.length; i++)
-			System.out.println(dist[i]);
-		System.out.println();
-
-		dist = dijkstra(new ArrayList<>(Arrays.asList(
-				new ArrayList<>(Arrays.asList(0.0,  5.0,  28.0, 30.0)),
-				new ArrayList<>(Arrays.asList(5.0,  0.0,  10.0, 14.0)),
-				new ArrayList<>(Arrays.asList(28.0, 10.0, 0.0,  15.0)),
-				new ArrayList<>(Arrays.asList(30.0, 14.0, 15.0, 0.0)))), 0);
-		for (int i = 0; i < dist.length; i++)
-			System.out.println(dist[i]);
-		System.out.println();
-
-		ArrayList<AdjacencyListGraph> tmp = AdjacencyListGraph.InitAdjacencyListGraph(
-				new double[][] { { 0, 5, 28, 30 }, { 5, 0, 10, 14 }, { 28, 10, 0, 15 }, { 30, 14, 15, 0 } });
-		dist = dijkstra(tmp, 0);
-		for (int i = 0; i < dist.length; i++)
-			System.out.println(dist[i]);
-		System.out.println();
-
-		tmp = AdjacencyListGraph
-				.InitAdjacencyListGraph(Arrays.asList(
-						new ArrayList<>(Arrays.asList(0.0,  5.0,  28.0, 30.0)),
-						new ArrayList<>(Arrays.asList(5.0,  0.0,  10.0, 14.0)),
-						new ArrayList<>(Arrays.asList(28.0, 10.0, 0.0,  15.0)),
-						new ArrayList<>(Arrays.asList(30.0, 14.0, 15.0, 0.0))));
-		dist = dijkstra(tmp, 0);
-		for (int i = 0; i < dist.length; i++)
-			System.out.println(dist[i]);
-		System.out.println();
-	}
-
     /**
      *
      * @param wg
      * @param g
      * @return Ребро, убрав из графа которое будет минимизирована LM метрика для графа.
      */
+    
+    public static double get_LM(WayGetter wg, Graph g){
+        double cur_len = 0.0;
+        int[] vertexs = g.get_vertexs(); 
+        int n = vertexs.length;
+        for (int i: vertexs){
+            double[] ways_len = wg.get_best_ways_len(i, g);
+            for (double f: ways_len){
+                if (f < Dijkstra.INF && f != 0.0){
+                    cur_len += 1.0/f;
+                }
+            }
+        }
+        cur_len *= 1.0/(vertexs.length*vertexs.length - vertexs.length);
+        return cur_len;
+    }
+    
     public static Edge minimize_LM(WayGetter wg, Graph g){
             Edge min_e = null;
-            double min_len = 1E300;
+            double min_len = Double.POSITIVE_INFINITY;
             int[] vertexs = g.get_vertexs();
             for (int v: vertexs){
                 for (Edge e: g.get_edges(v)){
                     Graph new_g = g.rm_edge(e.from, e.to);
-                    double cur_len = 0.0;
-                    for (int i: vertexs){
-                        double[] ways_len = wg.get_best_ways_len(i, new_g);
-                        for (double f: ways_len){
-                            cur_len += 1.0/f;
-                        }
-                    }
-                    cur_len *= 1.0/(vertexs.length*vertexs.length - vertexs.length);
+                    double cur_len = get_LM(wg, new_g);
                     if (cur_len < min_len){
                         min_e = e;
                         min_len = cur_len;
@@ -82,9 +55,19 @@ public class GraphTheory {
         
         public static void main(String argv[]) throws Exception{
             Scanner in = new Scanner(System.in);
-            Graph g = new Graph();
-            g.add(new Edge(1, 2, 1.0));
+            Edge[] edges = {
+                new Edge(1, 2, 0.1),
+                new Edge(1, 4, 0.2),
+                new Edge(1, 5, 2.0),
+                new Edge(2, 4, 0.2),
+                new Edge(4, 5, 0.3),
+                new Edge(5, 3, 0.1),
+            };
+            Graph g = new Graph(edges);
+            double[] dist = (new Dijkstra()).get_best_ways_len(1, g);
             Edge[] ale = g.get_edges(1);
+            int[] vers = g.get_vertexs();
+            minimize_LM(new Dijkstra(), g);
             if (true){
                 return;
             }
