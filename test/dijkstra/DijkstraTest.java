@@ -64,7 +64,7 @@ public class DijkstraTest {
         };
         Graph graph = new Graph(edges);
         int start = 1;
-        double[] expResult = {Dijkstra.INF, 0, 0.1, 2.4, 0.4, 0.2, 1.4};
+        double[] expResult = {0, 0.1, 0.2, 0.4, 1.4, 2.4};
         double[] result = Dijkstra.dijkstra_getMass(graph, start);
         assertArrayEquals(expResult, result, 0.00001);
     }

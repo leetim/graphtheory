@@ -11,7 +11,7 @@ set(JAVA_SRC ./src)
 set(PACKAGE_SRC_DIJKSTRA ${JAVA_SRC}/dijkstra/)
 set(PACKAGE_SRC_GRAPH ${JAVA_SRC}/graph/)
 set(PROJECT_SRC
-  ${PACKAGE_SRC_DIJKSTRA}/Dijkstra.java
+  ${PACKAGE_SRC_DIJKSTRA}/Dijkstra.java7888o9000
   ${PACKAGE_SRC_DIJKSTRA}/Pair.java
   ${PACKAGE_SRC_GRAPH}/Edge.java
   ${PACKAGE_SRC_GRAPH}/Graph.java
