@@ -1,12 +1,9 @@
-if [[ ${#@} = 0 ]]
-then echo "draw_graph input output"
+algtype=$1
+input_graph=$2
+input_nodes=$3
+res_file=$4
+outsvg=$5
 
-fi
-
-input_graph=$1
-input_nodes=$2
-outsvg=$3
-
-./get_graph_for_dot.py $input_graph $input_nodes > graph.graph
+./get_graph_for_dot.py $algtype $input_graph $input_nodes $res_file > graph.graph
 neato -s -n -Tsvg graph.graph>$outsvg
-# rm graph.graph
+rm graph.graph
