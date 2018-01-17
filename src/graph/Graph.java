@@ -86,9 +86,28 @@ public final class Graph {
      */
     public Graph rm_edge(int v1, int v2){
         Graph g = new Graph();
-        for (int v: get_vertexs()){
-            for (Edge e: get_edges(v)){
+        for (int v: get_vertexs()){//перебор всех вершин
+            for (Edge e: get_edges(v)){//перебор всех ребер, которые выходят из вершины v
                 if (e.from != v1 || e.to != v2){
+                    g.add(e);
+                }
+            }
+        }
+        return g;
+    }
+    
+    
+    
+    /**
+     *
+     * @param v
+     * @return Возврощает граф без ребер, соединяющих вершину v1 с v2.
+     */
+    public Graph rm_vertex(int vert){
+        Graph g = new Graph();
+        for (int v: get_vertexs()){//перебор всех вершин
+            for (Edge e: get_edges(v)){//перебор всех ребер, которые выходят из вершины v
+                if (e.from != vert && e.to != vert){
                     g.add(e);
                 }
             }

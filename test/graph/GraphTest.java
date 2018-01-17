@@ -111,5 +111,24 @@ public class GraphTest {
             assertEquals(res_e[i].weight, template_e[i].weight, 0.00001);
         }
     }
+
+    /**
+     * Test of rm_edge method, of class Graph.
+     */
+    @Test
+    public void testRm_vertex() {
+        System.out.println("rm_edge");
+        Edge[] e = {
+            new Edge(1, 2, 5.0),
+            new Edge(1, 5, 2.5),
+            new Edge(1, 4, 2.5),
+            new Edge(1, 3, 2.5)
+        };
+        int[] template_v = {1, 2, 3, 5};
+        Graph g = new Graph(e);
+        Graph new_g = g.rm_vertex(4);
+        int[] res_v = new_g.get_vertexs();
+        assertArrayEquals(template_v, res_v);
+    }
     
 }
