@@ -49,10 +49,10 @@ public class GraphTheory {
         int[] vertexs = g.get_vertexs();
         for (int v: vertexs){
             for (Edge e: g.get_edges(v)){
-                System.out.println(String.format("Check %d -> %d: %f", e.from, e.to, e.weight));
+                System.err.println(String.format("Check %d -> %d: %f", e.from, e.to, e.weight));
                 Graph new_g = g.rm_edge(e.from, e.to);
                 double cur_len = get_LM(wg, new_g);
-                System.out.println(String.format("Finish LM = %f newLM = %f", min_len, cur_len));
+                System.err.println(String.format("Finish LM = %f newLM = %f", min_len, cur_len));
                 if (cur_len < min_len){
                     min_e = e;
                     min_len = cur_len;
@@ -67,10 +67,10 @@ public class GraphTheory {
         double min_len = Double.POSITIVE_INFINITY;
         int[] vertexs = g.get_vertexs();
         for (int v: vertexs){
-            System.out.println(String.format("Check %d", v));
+            System.err.println(String.format("Check %d", v));
             Graph new_g = g.rm_vertex(v);
             double cur_len = get_LM(wg, new_g);
-            System.out.println(String.format("Finish LM = %f newLM = %f", min_len, cur_len));
+            System.err.println(String.format("Finish LM = %f newLM = %f", min_len, cur_len));
             if (cur_len < min_len){
                 min_v = v;
                 min_len = cur_len;
@@ -121,13 +121,13 @@ public class GraphTheory {
                 switch(m){
                     case DEFAULT:
                     case RM_EDGE:{
-                        System.out.println("Start working!");
+                        System.err.println("Start working!");
                         Edge min_e = minimize_LM_by_edge(new Dijkstra(), g);
                         System.out.println(String.format("Edge: %d -> %d: %f", min_e.from, min_e.to, min_e.weight));
                         break;
                     }
                     case RM_VERTEX:{
-                        System.out.println("Start working!");
+                        System.err.println("Start working!");
                         int min_v = minimize_LM_by_vert(new Dijkstra(), g);
                         System.out.println(String.format("Vertex: %d", min_v));
                         break;

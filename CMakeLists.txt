@@ -21,3 +21,12 @@ set(PROJECT_SRC
 set(PROJECT_MAIN_CLASS GraphTheory)
 
 add_jar(main SOURCE ${PROJECT_SRC} ENTRY_POINT ${PROJECT_MAIN_CLASS})
+create_javadoc(my_example_doc
+  FILES ${PROJECT_SRC}
+  CLASSPATH ${CMAKE_JAVA_INCLUDE_PATH}
+  WINDOWTITLE "My example"
+  DOCTITLE "<h1>My example</h1>"
+  AUTHOR TRUE
+  USE TRUE
+  VERSION TRUE
+)
