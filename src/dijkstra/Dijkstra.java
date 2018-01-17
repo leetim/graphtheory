@@ -5,46 +5,53 @@ import graph.Graph;
 import graph.WayGetter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 public class Dijkstra implements WayGetter {
 
-	public static Double INF = Double.MAX_VALUE / 2; // "Бесконечность"
+	public static Double INF = Double.POSITIVE_INFINITY; // "Бесконечность"
 
 	public Dijkstra() {}
 
 	public static double[] dijkstra_getMass(Graph graph, int start) {
-		int vertexs[] = graph.get_vertexs();
-                int v_max = -1;
-                for (int v: vertexs){
-                    v_max = Math.max(v_max, v);
+            int[] vertexs = graph.get_vertexs();
+            Map<Integer, Double> dists = new TreeMap<Integer, Double>();
+            Set<Integer> visited = new TreeSet<Integer>();
+            for (int i: vertexs){
+                dists.put(i, INF);
+                if (i == start){
+                    dists.put(i, 0.0);
                 }
-		Edge edges[] = null;
-		boolean[] used = new boolean[v_max + 1]; // массив пометок
-		double[] dist = new double[v_max + 1]; // массив расстояния. dist[v] = минимальное_расстояние(start, v)
-
-		Arrays.fill(dist, INF); // устанаавливаем расстояние до всех вершин INF
-		dist[start] = 0; // для начальной вершины положим 0
-
-		for (;;) {
-			int v = -1;
-			for (int nv = 0; nv < used.length; nv++) // перебираем вершины
-				if (!used[nv] && dist[nv] < INF && (v == -1 || dist[v] > dist[nv])) // выбираем самую близкую
-																					// непомеченную вершину
-					v = nv;
-			if (v == -1)
-				break; // ближайшая вершина не найдена
-			used[v] = true; // помечаем ее
-			edges = graph.get_edges(v);
-			for (Edge e: edges) {
-				dist[e.to] = Math.min(dist[e.to], dist[e.from] + e.weight); // улучшаем оценку
-																								// расстояния
-																								// (релаксация)
-			}
-		}
-		return dist;
-	}
+            }
+            PriorityQueue<Pair<Double, Integer>> q = new PriorityQueue<Pair<Double, Integer>>();
+            q.add(new Pair(0.0, start));
+            while (!q.isEmpty()){
+                Pair<Double, Integer> cur_p = q.poll();
+                Pair<Double, Integer> temp_p = new Pair(2.1, 7);
+                int cur_v = cur_p.snd;
+                if (visited.contains(cur_v)){
+                    continue;
+                }
+                dists.put(cur_p.snd, cur_p.fst);
+                visited.add(cur_v);
+                for (Edge e: graph.get_edges(cur_v)){
+                    q.add(new Pair(cur_p.fst + e.weight, e.to));
+                }
+            }
+            ArrayList<Double> arr = new ArrayList(dists.values());
+            Collections.sort(arr);
+            double[] res = new double[arr.size()];
+            for (int i = 0; i < arr.size(); i++){
+                res[i] = arr.get(i);
+            }
+            return res;
+        }
 
 	@Override
 	public double[] get_best_ways_len(int vert, Graph g) {
