@@ -3,6 +3,7 @@ import dijkstra.Dijkstra;
 import graph.Edge;
 import graph.Graph;
 import graph.WayGetter;
+import java.io.BufferedInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -42,8 +43,10 @@ public class GraphTheory {
             int[] vertexs = g.get_vertexs();
             for (int v: vertexs){
                 for (Edge e: g.get_edges(v)){
+                    System.out.println(String.format("Check %d -> %d: %f", e.from, e.to, e.weight));
                     Graph new_g = g.rm_edge(e.from, e.to);
                     double cur_len = get_LM(wg, new_g);
+                    System.out.println(String.format("Finish LM = %f newLM = %f", min_len, cur_len));
                     if (cur_len < min_len){
                         min_e = e;
                         min_len = cur_len;
@@ -54,25 +57,16 @@ public class GraphTheory {
         }
         
         public static void main(String argv[]) throws Exception{
-            Scanner in = new Scanner(System.in);
-            Edge[] edges = {
-                new Edge(1, 2, 0.1),
-                new Edge(1, 4, 0.2),
-                new Edge(1, 5, 2.0),
-                new Edge(2, 4, 0.2),
-                new Edge(4, 5, 0.3),
-                new Edge(5, 3, 0.1),
-            };
-            Graph g = new Graph(edges);
-            double[] dist = (new Dijkstra()).get_best_ways_len(1, g);
-            Edge[] ale = g.get_edges(1);
-            int[] vers = g.get_vertexs();
-            minimize_LM(new Dijkstra(), g);
-            if (true){
-                return;
+            int process_count = 1;
+            for (int i = 0; i < argv.length; i++){
+                if ("--cpu_count".equals(argv[i]) || "-cc".equals(argv[i])){
+                    process_count = Math.max(1, Integer.valueOf(argv[i+1]));
+                }
             }
+            Scanner in = new Scanner(new BufferedInputStream(System.in));
+            Graph g = new Graph();
             try{                
-                while (in.hasNext()){
+                while (in.hasNextInt()){
                     int v1, v2;
                     double l;
                     if (in.hasNextInt()){
@@ -95,6 +89,7 @@ public class GraphTheory {
                     }
                     g.add(new Edge(v1, v2, l));
                 }
+                System.out.println("Start working!");
                 Edge min_e = minimize_LM(new Dijkstra(), g);
                 System.out.println(String.format("Edge: %d -> %d: %f", min_e.from, min_e.to, min_e.weight));
             }
