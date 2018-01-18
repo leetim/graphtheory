@@ -30,11 +30,15 @@ set(GRAPH_RES ${CMAKE_TEMP_DIR}/graph_res/)
 
 if (NOT EXISTS ${JAVA_SRC})
   execute_process(
-    COMMAND nuweb -p $ ${CMAKE_CURRENT_SOURCE_DIR}/article.w
+    COMMAND nuweb ${CMAKE_CURRENT_SOURCE_DIR}/article.w
     # COMMAND pdflatex ./article.w
     COMMAND mkdir ${JAVA_SRC}
+    COMMAND mkdir ${CMAKE_CURRENT_SOURCE_DIR}/test
     COMMAND mkdir ${PACKAGE_SRC_DIJKSTRA}
     COMMAND mkdir ${PACKAGE_SRC_GRAPH}
+    COMMAND mkdir ${CMAKE_CURRENT_SOURCE_DIR}/test/dijkstra
+    COMMAND mkdir ${CMAKE_CURRENT_SOURCE_DIR}/test/graph
+    COMMAND mv ./GraphTest.java ${CMAKE_CURRENT_SOURCE_DIR}/test/graph
     COMMAND mv ./Dijkstra.java ${PACKAGE_SRC_DIJKSTRA}/Dijkstra.java
     COMMAND mv ./Pair.java ${PACKAGE_SRC_DIJKSTRA}/Pair.java
     COMMAND mv ./Edge.java ${PACKAGE_SRC_GRAPH}/Edge.java
@@ -69,31 +73,31 @@ create_javadoc(my_example_doc
 )
 
 add_custom_target(report
-  COMMAND pdflatex ./article.tex -output-directory=./temp
-  DEPENDS ./temp/images/1e.svg ./temp/images/2e.svg ./temp/images/1v.svg ./temp/images/2v.svg
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  COMMAND pdflatex ./article.tex
+  DEPENDS ./images/1e.eps ./images/2e.eps ./images/1v.eps ./images/2v.eps
+  WORKING_DIRECTORY ${CMAKE_TEMP_DIR}
 )
 
-add_custom_target(1e.svg
-  COMMAND ../../graph-builder/draw_graph.sh -e ../../graphEdges/graph1.txt ../../graphNodes/node1.txt ../graph_res/run1e.out ./1e.svg
+add_custom_target(1e.eps
+  COMMAND ../../graph-builder/draw_graph.sh -e ../../graphEdges/graph1.txt ../../graphNodes/node1.txt ../graph_res/run1e.out ./1e.eps
   DEPENDS ../graph_res/run1e.out
   WORKING_DIRECTORY ${IMAGES_PATH}
 )
 
-add_custom_target(2e.svg
-  COMMAND ../../graph-builder/draw_graph.sh -e ../../graphEdges/graph2.txt ../../graphNodes/node2.txt ../graph_res/run2e.out ./2e.svg
+add_custom_target(2e.eps
+  COMMAND ../../graph-builder/draw_graph.sh -e ../../graphEdges/graph2.txt ../../graphNodes/node2.txt ../graph_res/run2e.out ./2e.eps
   DEPENDS ../graph_res/run2e.out
   WORKING_DIRECTORY ${IMAGES_PATH}
 )
 
-add_custom_target(1v.svg
-  COMMAND ../../graph-builder/draw_graph.sh -v ../../graphEdges/graph1.txt ../../graphNodes/node1.txt ../graph_res/run1v.out ./1v.svg
+add_custom_target(1v.eps
+  COMMAND ../../graph-builder/draw_graph.sh -v ../../graphEdges/graph1.txt ../../graphNodes/node1.txt ../graph_res/run1v.out ./1v.eps
   DEPENDS ../graph_res/run1v.out
   WORKING_DIRECTORY ${IMAGES_PATH}
 )
 
-add_custom_target(2v.svg
-  COMMAND ../../graph-builder/draw_graph.sh -v ../../graphEdges/graph2.txt ../../graphNodes/node2.txt ../graph_res/run2v.out ./2v.svg
+add_custom_target(2v.eps
+  COMMAND ../../graph-builder/draw_graph.sh -v ../../graphEdges/graph2.txt ../../graphNodes/node2.txt ../graph_res/run2v.out ./2v.eps
   DEPENDS ../graph_res/run2v.out
   WORKING_DIRECTORY ${IMAGES_PATH}
 )

@@ -33,7 +33,6 @@ public class Dijkstra implements WayGetter {
             q.add(new Pair(0.0, start));
             while (!q.isEmpty()){
                 Pair<Double, Integer> cur_p = q.poll();
-                Pair<Double, Integer> temp_p = new Pair(2.1, 7);
                 int cur_v = cur_p.snd;
                 if (visited.contains(cur_v)){
                     continue;
