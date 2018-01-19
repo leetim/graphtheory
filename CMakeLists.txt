@@ -74,7 +74,13 @@ create_javadoc(my_example_doc
 
 add_custom_target(report
   COMMAND pdflatex ./article.tex
-  DEPENDS ./images/1e.eps ./images/2e.eps ./images/1v.eps ./images/2v.eps
+  DEPENDS ./article.tex ./images/1e.eps ./images/2e.eps ./images/1v.eps ./images/2v.eps
+  WORKING_DIRECTORY ${CMAKE_TEMP_DIR}
+)
+
+add_custom_target(article.tex
+  COMMAND nuweb ../article.w
+  COMMAND rm *.java
   WORKING_DIRECTORY ${CMAKE_TEMP_DIR}
 )
 
@@ -124,4 +130,9 @@ add_custom_target(run2v.out
   COMMAND java -jar ../main.jar -v <../../graphEdges/graph2.txt 1>./run2v.out 2>./run2v.err
   DEPENDS ../main
   WORKING_DIRECTORY ${GRAPH_RES}
+)
+
+add_custom_target(clear
+  COMMAND rm *.java
+  WORKING_DIRECTORY ${CMAKE_TEMP_DIR}
 )

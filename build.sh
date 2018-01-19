@@ -1,3 +1,4 @@
+cd $(dirname $0)
 mkdir temp
 cd temp
 cmake ..
