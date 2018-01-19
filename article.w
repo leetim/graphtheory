@@ -1,5 +1,5 @@
 \documentclass[12pt]{article}
-\usepackage{graphicx}
+\usepackage[pdftex]{graphicx}
 \usepackage{amssymb}
 \usepackage{listings}
 \usepackage{amsmath}
@@ -11,6 +11,8 @@
 \usepackage[T2A]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[russian]{babel}
+\graphicspath{{./images/}}
+\DeclareGraphicsExtensions{.eps,.pdf,.png,.jpg}
 \begin{document}
 
 \title{Алгоритмическая теория графов \\ Эффективность сети. Критические вершины/ребра}
@@ -37,18 +39,19 @@
 \section{Постановка задачи}
 Для графа $ G = (V, E, W) $ с множеством вершин V, и множеством ребер $ E \subset V \times V $ найти ребро $ e* $ и вершину $ v* $ такие, что при их удалении из графа $LM$-метрика \\
 $$ \rho_{LM} = \frac{1}{n(n-1)} \sum_{i, j} d_{ij}^{-1} $$ \\
-минимизируется. В определении $ LM$-метрики $ d_{ij} $- сетевое расстояние между вершинами $i$ и $j$. Расчеты привести для графа Владивостока-2012.
+минимизируется. В определении $ LM $-метрики $ d_{ij} $- сетевое расстояние между вершинами $i$ и $j$. 
 \section{Алгоритмика}
 Для минимизации метрики с помощью перебора поочередно удаляются ребра из графа, после чего из каждой вершины запускается алгоритм Дейкстры для вычисления $ LM$-метрики в графе без этого ребра.\\
 После каждого запуска алгоритма значение метрики сравнивается с вычисленным ранее и в случае, если новое значение оказывается меньше, перезаписывается. \\
-По завершению работы программы в результате сохраняется минимальное значение метрики и данные об удаленном ребре (вершины, которые соединяло ребро, и его вес).
+По завершении работы программы в результате сохраняется минимальное значение метрики и данные об удаленном ребре (вершины, которые соединяло ребро, и его вес).
 
 \section{Реализация}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Для подсчета значений $ LM$-метрики в графе использовался алгоритм Дейкстры. \\
+Для подсчета значений $ LM $-метрики в графе использовался алгоритм Дейкстры, написанный на языке Java. 
 
 @o Dijkstra.java @{
-    package dijkstra;
+
+package dijkstra;
 
 import graph.Edge;
 import graph.Graph;
@@ -65,51 +68,52 @@ import java.util.TreeSet;
 
 public class Dijkstra implements WayGetter {
 
-    public static Double INF = Double.POSITIVE_INFINITY; // "Бесконечность"
+  // "Бесконечность"
+  public static Double INF = Double.POSITIVE_INFINITY; 
 
-    public Dijkstra() {}
+  public Dijkstra() {}
 
-    @< dijkstra getMass @>
+  @< dijkstra getMass @>
 
-    @< get best ways len @>
+  @< get best ways len @>
 }
 @}
 
 @d dijkstra getMass @{
-    public static double[] dijkstra_getMass(Graph graph, int start) {
-            int[] vertexs = graph.get_vertexs();
-            Map<Integer, Double> dists = new TreeMap<Integer, Double>();
-            Set<Integer> visited = new TreeSet<Integer>();
-            for (int i: vertexs){
-                dists.put(i, INF);
-                if (i == start){
-                    dists.put(i, 0.0);
-                }
-            }
-            PriorityQueue<Pair<Double, Integer>> q =
-                new PriorityQueue<Pair<Double, Integer>>();
-            q.add(new Pair(0.0, start));
-            while (!q.isEmpty()){
-                Pair<Double, Integer> cur_p = q.poll();
-                Pair<Double, Integer> temp_p = new Pair(2.1, 7);
-                int cur_v = cur_p.snd;
-                if (visited.contains(cur_v)){
-                    continue;
-                }
-                dists.put(cur_p.snd, cur_p.fst);
-                visited.add(cur_v);
-                for (Edge e: graph.get_edges(cur_v)){
-                    q.add(new Pair(cur_p.fst + e.weight, e.to));
-                }
-            }
-            ArrayList<Double> arr = new ArrayList(dists.values());
-            Collections.sort(arr);
-            double[] res = new double[arr.size()];
-            for (int i = 0; i < arr.size(); i++){
-                res[i] = arr.get(i);
-            }
-            return res;
+  public static double[] dijkstra_getMass(Graph graph, int start) {
+    int[] vertexs = graph.get_vertexs();
+    Map<Integer, Double> dists = new TreeMap<Integer, Double>();
+    Set<Integer> visited = new TreeSet<Integer>();
+    for (int i: vertexs){
+      dists.put(i, INF);
+      if (i == start){
+          dists.put(i, 0.0);
+      }
     }
+    PriorityQueue<Pair<Double, Integer>> q =
+      new PriorityQueue<Pair<Double, Integer>>();
+    q.add(new Pair(0.0, start));
+    while (!q.isEmpty()){
+      Pair<Double, Integer> cur_p = q.poll();
+      Pair<Double, Integer> temp_p = new Pair(2.1, 7);
+      int cur_v = cur_p.snd;
+      if (visited.contains(cur_v)){
+          continue;
+      }
+      dists.put(cur_p.snd, cur_p.fst);
+      visited.add(cur_v);
+      for (Edge e: graph.get_edges(cur_v)){
+          q.add(new Pair(cur_p.fst + e.weight, e.to));
+      }
+    }
+    ArrayList<Double> arr = new ArrayList(dists.values());
+    Collections.sort(arr);
+    double[] res = new double[arr.size()];
+    for (int i = 0; i < arr.size(); i++){
+        res[i] = arr.get(i);
+    }
+    return res;
+  }
 @}
 
 @d get best ways len @{
@@ -120,7 +124,8 @@ public class Dijkstra implements WayGetter {
 @}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-В приведенном ниже файле задается описание структуры вершин.
+В приведенном ниже файле задается описание структуры вершин в графе.
+
 @o Edge.java @{
     /*
      * To change this license header, choose License Headers in Project Properties.
@@ -167,7 +172,8 @@ public class Dijkstra implements WayGetter {
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-В стандартной библиотеке Openjdk нет подходящего класса Pair, поэтому в сети была найдена реализация данного класса и отредактирована.
+В стандартной библиотеке Openjdk не оказалось подходящего к данной реализации алгоритма класса Pair, поэтому в сети была найдена реализация данного класса и отредактирована в соотвтетсвии с имеющейся структурой.
+
 @o Pair.java @{
     /*
     * To change this license header, choose License Headers in Project Properties.
@@ -253,6 +259,7 @@ public class Dijkstra implements WayGetter {
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Файл Graph.java реализует интерфейс работы с графом.
+
 @o Graph.java @{
     package graph;
 
@@ -401,7 +408,8 @@ public class Dijkstra implements WayGetter {
 @}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Результатом приведенного ниже кода является ребро, убрав из графа которое будет минимизирована $ LM $-метрика. \\
-Код содержит функции получения значения LM метрики и минимизации этой метрики по ребру/вершине.
+Код содержит функции получения значения $ LM $-метрики и минимизации этой метрики по ребру/вершине.
+
 @o GraphTheory.java @{
     import dijkstra.Dijkstra;
     import graph.Edge;
@@ -530,7 +538,18 @@ public class Dijkstra implements WayGetter {
             }
             Scanner in = new Scanner(new BufferedInputStream(System.in));
             Graph g = new Graph();
-            try{
+            
+            @< try part @>
+
+            @< catch part @>
+
+             
+            
+        }
+@}
+
+@d try part @{
+              try{
                 while (in.hasNextInt()){
                     int v1, v2;
                     double l;
@@ -576,14 +595,17 @@ public class Dijkstra implements WayGetter {
 
                 }
             }
-            catch(Exception e){
-                System.err.println(e.getMessage());
-            }
-        }
-@}
+            @}
 
+
+@d catch part @{
+              catch(Exception e){
+                System.err.println(e.getMessage());
+              }
+@}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Интерфейс:
+
 @o WayGetter.java @{
     package graph;
 
@@ -606,7 +628,8 @@ public class Dijkstra implements WayGetter {
 @}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Тестирование входящих в алгоритм методов проводилось с использованием маленького графа.
+Тестирование входящих в алгоритм методов добавления и получения вершин/ребер.
+
 @o GraphTest.java @{
     /*
      * To change this license header, choose License Headers in
@@ -770,12 +793,46 @@ public class Dijkstra implements WayGetter {
 @}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Результаты}
-На простом графе порядка 10-20 вершин с подробным разбором работы алгоритма, \\
-на реалистических примерах с порядка 1000-5000 вершин с оценкой вычислительной сложности алгоритма, \\
-на реальном примере максимальной размерности.
+
+Ниже приведена визуализация примера работы алгоритма на маленьком графе с 6-ю вершинами и 10-ю ребрами, представленная на рис. 1 и 2. Сначала $ LM $-метрика минимизируется с помощью удаления критической вершины(выделена синим), после с помощью удаления критического ребра(выделено красным).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.7]{images/1v}
+    \caption{Маленький граф с выделенной критической вершиной.}
+    \label{images/1v}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.7]{images/1e}
+    \caption{Маленький граф с выделенным критическим ребром.}
+    \label{images/1e}
+\end{figure}
+
+Далее на рис. 3 и 4 приведена визуализация работы алгоритма на среднем графе с 20-ю вершинами. Аналогично предыдущему примеру, сначала $ LM $-метрика минимизируется с помощью удаления критической вершины(выделена синим), после с помощью удаления критического ребра(выделено красным).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{images/2v}
+    \caption{Средний граф с выделенной критической вершиной.}
+    \label{images/1e}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{images/2e}
+    \caption{Средний граф с выделенным критическим ребром.}
+    \label{images/1e}
+\end{figure}
+
+
+Для заключительного тестирования был рассмотрен граф, представляющий собой транспортную сеть города Владивостока 2009-го года, который состоит из 1542 вершин и 1653 ребер.
+По завершении работы программы было определено критическое ребро между вершинами 350 и 367 и критическая вершина 373. Поскольку размеры графа не позволяют визуализировать результат так, чтобы можно было точно увидеть найденные критические значения, было решено привести только численное значение результата. 
+
 
 \section{Заключение}
-
+Итогом проекта стал алгоритм поиска критических ребра и вершины, удаление из графа которых приводило к минимизации заданной $LM$-метрики. Работа алгоритма была протестирована на трех графах разных размеров, результаты визуализированы. 
 
 
 \end{document}
